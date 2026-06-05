@@ -1,0 +1,74 @@
+# =====================================================
+# BusApp Test Database Configuration
+# MySQL 8.0 Testcontainers / Docker Mock
+# =====================================================
+#
+# Cách dùng:
+#   1. IDE/CLI: chạy TestDatabaseConfig.java
+#   2. Docker: docker compose up -d (trong thư mục backend/bus-api/)
+#   3. Manual Docker:
+#      docker run -d --name busapp-mysql-test
+#        -e MYSQL_ROOT_PASSWORD=test1234
+#        -e MYSQL_DATABASE=busapp_db
+#        -p 3307:3306 mysql:8.0
+#
+# Connection info:
+#   Host: localhost
+#   Port: 3307
+#   Database: busapp_db
+#   User: root
+#   Password: test1234
+# =====================================================
+
+spring:
+  application:
+    name: buss-api-test
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/busapp_db?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    username: root
+    password: trine1234@
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      idle-timeout: 300000
+      connection-timeout: 20000
+      max-lifetime: 1200000
+
+  jpa:
+    hibernate:
+      ddl-auto: none          # Không auto-create schema, dùng init.sql
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+    open-in-view: false
+    # import sql files
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: never             # Schema đã được init trong container
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Ho_Chi_Minh
+
+server:
+  port: 8080
+
+# JWT Configuration
+jwt:
+  secret: BusAppSecretKey2026VeryLongAndSecureKeyForJWTTokenGenerationAtLeast256BitsLong!!
+  expiration: 86400000  # 24 hours
+
+# Logging
+logging:
+  level:
+    com.busapp: DEBUG
+    org.springframework.security: INFO
+    org.hibernate.SQL: DEBUG
